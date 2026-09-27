@@ -59,7 +59,8 @@ public class DefaultLeavesBlock extends AbstractLeavesBlock implements ILeafType
 		ITree tree = this.type.getIndividual();
 		if (tree != null && tree.hasFruitLeaves()) {
 			float sappiness = tree.getGenome().getActiveValue(forestry.api.core.genetics.alleles.TreeChromosomes.SAPPINESS);
-			int ripeningPeriod = tree.getGenome().resolveActive(forestry.api.core.genetics.alleles.TreeChromosomes.FRUIT).getRipeningPeriod();
+			forestry.api.arboriculture.genetics.IFruit fruit = tree.getGenome().resolveActive(forestry.api.core.genetics.alleles.TreeChromosomes.FRUIT);
+			int ripeningPeriod = fruit.getRipeningPeriod();
 			if (ripeningPeriod > 0 && sappiness > 0) {
 				float probability = sappiness / (float) ripeningPeriod;
 				if (random.nextFloat() < probability) {
