@@ -133,6 +133,11 @@ public class FarmLogicOrchard extends FarmLogic {
 				return new CropFruit(world, position);
 			}
 		} else {
+			// DefaultFruitLeavesBlock has no tile entity, but is a harvestable fruit leaf
+			BlockState state = world.getBlockState(position);
+			if (state.getBlock() instanceof DefaultFruitLeavesBlock) {
+				return new CropFruit(world, position);
+			}
 			return getCrop(world, position);
 		}
 		return null;
