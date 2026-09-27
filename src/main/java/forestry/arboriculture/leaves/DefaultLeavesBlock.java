@@ -51,26 +51,6 @@ public class DefaultLeavesBlock extends AbstractLeavesBlock implements ILeafType
 	@Override
 	public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
 		super.randomTick(state, level, pos, random);
-
-		// Regrow fruit: convert non-fruit leaf back to fruit leaf for trees with fruit genome
-		// This mimics the LeavesBlockEntity ripening mechanic for the no-BE leaves
-		// BE formula: ripeningTime++ with probability=sappiness per tick, needs ripeningPeriod increments
-		// Expected ticks = ripeningPeriod / sappiness, so p = sappiness / ripeningPeriod for exact match
-		ITree tree = this.type.getIndividual();
-		if (tree != null && tree.hasFruitLeaves()) {
-			float sappiness = tree.getGenome().getActiveValue(forestry.api.core.genetics.alleles.TreeChromosomes.SAPPINESS);
-			forestry.api.arboriculture.genetics.IFruit fruit = tree.getGenome().resolveActive(forestry.api.core.genetics.alleles.TreeChromosomes.FRUIT);
-			int ripeningPeriod = fruit.getRipeningPeriod();
-			if (ripeningPeriod > 0 && sappiness > 0) {
-				float probability = sappiness / (float) ripeningPeriod;
-				if (random.nextFloat() < probability) {
-					Block fruitBlock = forestry.arboriculture.features.ArboricultureBlocks.LEAVES_DEFAULT_FRUIT.get(this.type).block();
-					level.setBlock(pos, fruitBlock.defaultBlockState()
-						.setValue(LeavesBlock.PERSISTENT, state.getValue(LeavesBlock.PERSISTENT))
-						.setValue(LeavesBlock.DISTANCE, state.getValue(LeavesBlock.DISTANCE)), Block.UPDATE_CLIENTS);
-				}
-			}
-		}
 	}
 
 	@Override

@@ -43,6 +43,13 @@ public abstract class AbstractArboricultureFeature extends AbstractForestryFeatu
 
 	protected final ITreeGenData tree;
 
+	/**
+	 * When true (default), trees use lightweight no-BE leaves for worldgen performance.
+	 * Set to false for player-grown trees so they use BE leaves with the full genome,
+	 * enabling breeding traits, fruit ripening, and orchard harvesting.
+	 */
+	protected boolean isWorldgen = true;
+
 	protected AbstractArboricultureFeature(ITreeGenData tree) {
 		this.tree = tree;
 	}
@@ -54,7 +61,9 @@ public abstract class AbstractArboricultureFeature extends AbstractForestryFeatu
 
 	@Override
 	public boolean place(IGenome genome, LevelAccessor level, RandomSource rand, BlockPos pos, boolean forced) {
-		TreeBlockTypeLeaf leaf = new TreeBlockTypeLeaf(this.tree, genome);
+		// Player-grown trees use BE leaves to preserve the genome (breeding traits, fruit, etc.)
+		// Worldgen trees use lightweight no-BE leaves for performance.
+		TreeBlockTypeLeaf leaf = new TreeBlockTypeLeaf(this.tree, genome, !this.isWorldgen);
 		TreeBlockTypeLog wood = new TreeBlockTypeLog(this.tree, genome);
 
 		// Calculate height and girth

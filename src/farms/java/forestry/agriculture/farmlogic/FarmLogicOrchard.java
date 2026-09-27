@@ -5,7 +5,6 @@ import forestry.api.agriculture.IFarmHousing;
 import forestry.api.agriculture.IFarmType;
 import forestry.api.agriculture.IFarmable;
 import forestry.api.core.genetics.IFruitBearer;
-import forestry.arboriculture.leaves.DefaultFruitLeavesBlock;
 import forestry.core.platform.tile.TileUtil;
 import forestry.agriculture.farmlogic.crops.CropFruit;
 import net.minecraft.core.BlockPos;
@@ -110,11 +109,6 @@ public class FarmLogicOrchard extends FarmLogic {
 			return true;
 		}
 
-		// DefaultFruitLeavesBlock has no tile entity, but is a fruit-bearing leaf
-		if (state.getBlock() instanceof DefaultFruitLeavesBlock) {
-			return true;
-		}
-
 		for (IFarmable farmable : getFarmables()) {
 			if (farmable.isSaplingAt(world, pos, state)) {
 				return true;
@@ -133,11 +127,6 @@ public class FarmLogicOrchard extends FarmLogic {
 				return new CropFruit(world, position);
 			}
 		} else {
-			// DefaultFruitLeavesBlock has no tile entity, but is a harvestable fruit leaf
-			BlockState state = world.getBlockState(position);
-			if (state.getBlock() instanceof DefaultFruitLeavesBlock) {
-				return new CropFruit(world, position);
-			}
 			return getCrop(world, position);
 		}
 		return null;
