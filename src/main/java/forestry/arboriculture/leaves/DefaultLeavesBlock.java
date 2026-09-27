@@ -7,11 +7,14 @@ import forestry.api.client.IForestryClientApi;
 import forestry.core.platform.util.SpeciesUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.neoforged.api.distmarker.Dist;
@@ -38,6 +41,29 @@ public class DefaultLeavesBlock extends AbstractLeavesBlock implements ILeafType
 
 	public ForestryLeafType getType() {
 		return this.type;
+	}
+
+	@Override
+	public boolean isRandomlyTicking(BlockState state) {
+		return true;
+	}
+
+	@Override
+	public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+		super.randomTick(state, level, pos, random);
+
+		// Regrow fruit: convert non-fruit leaf back to fruit leaf for trees with fruit genome
+		// This mimics the LeavesBlockEntity ripening mechanic for the no-BE leaves
+		ITree tree = this.type.getIndividual();
+		if (tree != null && tree.hasFruitLeaves()) {
+			// 10% chance per random tick to fruit (adjustable via randomTickSpeed gamerule)
+			if (random.nextFloat() < 0.1f) {
+				Block fruitBlock = forestry.arboriculture.features.ArboricultureBlocks.LEAVES_DEFAULT_FRUIT.get(this.type).block();
+				level.setBlock(pos, fruitBlock.defaultBlockState()
+					.setValue(LeavesBlock.PERSISTENT, state.getValue(LeavesBlock.PERSISTENT))
+					.setValue(LeavesBlock.DISTANCE, state.getValue(LeavesBlock.DISTANCE)), Block.UPDATE_CLIENTS);
+			}
+		}
 	}
 
 	@Override
