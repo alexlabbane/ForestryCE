@@ -48,7 +48,7 @@ public abstract class AbstractArboricultureFeature extends AbstractForestryFeatu
 	 * Set to false for player-grown trees so they use BE leaves with the full genome,
 	 * enabling breeding traits, fruit ripening, and orchard harvesting.
 	 */
-	protected boolean isWorldgen = true;
+	public boolean isWorldgen = true;
 
 	protected AbstractArboricultureFeature(ITreeGenData tree) {
 		this.tree = tree;
