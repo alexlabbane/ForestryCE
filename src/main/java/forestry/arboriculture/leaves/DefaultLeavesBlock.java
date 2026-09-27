@@ -58,8 +58,8 @@ public class DefaultLeavesBlock extends AbstractLeavesBlock implements ILeafType
 		// Expected ticks = ripeningPeriod / sappiness, so p = sappiness / ripeningPeriod for exact match
 		ITree tree = this.type.getIndividual();
 		if (tree != null && tree.hasFruitLeaves()) {
-			float sappiness = tree.getGenome().getActiveValue(forestry.api.arboriculture.genetics.TreeChromosomes.SAPPINESS);
-			int ripeningPeriod = tree.getGenome().resolveActive(forestry.api.arboriculture.genetics.TreeChromosomes.FRUIT).getRipeningPeriod();
+			float sappiness = tree.getGenome().getActiveValue(forestry.api.core.genetics.alleles.TreeChromosomes.SAPPINESS);
+			int ripeningPeriod = tree.getGenome().resolveActive(forestry.api.core.genetics.alleles.TreeChromosomes.FRUIT).getRipeningPeriod();
 			if (ripeningPeriod > 0 && sappiness > 0) {
 				float probability = sappiness / (float) ripeningPeriod;
 				if (random.nextFloat() < probability) {
