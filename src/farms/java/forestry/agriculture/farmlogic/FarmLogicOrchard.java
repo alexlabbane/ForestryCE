@@ -5,6 +5,7 @@ import forestry.api.agriculture.IFarmHousing;
 import forestry.api.agriculture.IFarmType;
 import forestry.api.agriculture.IFarmable;
 import forestry.api.core.genetics.IFruitBearer;
+import forestry.arboriculture.leaves.DefaultFruitLeavesBlock;
 import forestry.core.platform.tile.TileUtil;
 import forestry.agriculture.farmlogic.crops.CropFruit;
 import net.minecraft.core.BlockPos;
@@ -106,6 +107,11 @@ public class FarmLogicOrchard extends FarmLogic {
 	private boolean isFruitBearer(Level world, BlockPos pos, BlockState state) {
 		IFruitBearer tile = TileUtil.getTile(world, pos, IFruitBearer.class);
 		if (tile != null) {
+			return true;
+		}
+
+		// DefaultFruitLeavesBlock has no tile entity, but is a fruit-bearing leaf
+		if (state.getBlock() instanceof DefaultFruitLeavesBlock) {
 			return true;
 		}
 

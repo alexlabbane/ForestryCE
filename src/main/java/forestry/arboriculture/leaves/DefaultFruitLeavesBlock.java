@@ -55,11 +55,7 @@ public class DefaultFruitLeavesBlock extends AbstractLeavesBlock implements ILea
 				return ItemInteractionResult.SUCCESS;
 			}
 			BlockUtil.sendDestroyEffects(level, pos, state);
-			IFruit fruitProvider = tree.getGenome().resolveActive(TreeChromosomes.FRUIT);
-			List<ItemStack> products = tree.produceStacks(level, pos, fruitProvider.getRipeningPeriod());
-			level.setBlock(pos, ArboricultureBlocks.LEAVES_DEFAULT.get(this.type).defaultState()
-				.setValue(LeavesBlock.PERSISTENT, state.getValue(LeavesBlock.PERSISTENT))
-				.setValue(LeavesBlock.DISTANCE, state.getValue(LeavesBlock.DISTANCE)), Block.UPDATE_CLIENTS);
+			List<ItemStack> products = harvestFruit(level, pos, state);
 			for (ItemStack fruit : products) {
 				ItemHandlerHelper.giveItemToPlayer(player, fruit);
 			}
@@ -96,6 +92,24 @@ public class DefaultFruitLeavesBlock extends AbstractLeavesBlock implements ILea
 
 	public ForestryLeafType getType() {
 		return this.type;
+	}
+
+	/**
+	 * Harvests fruit from this leaf block, converting it to non-fruit leaves.
+	 * Used by farms for automated harvesting.
+	 * @return The harvested fruit products, or empty list if no tree/fruit.
+	 */
+	public List<ItemStack> harvestFruit(Level level, BlockPos pos, BlockState state) {
+		ITree tree = getTree(level, pos);
+		if (tree == null) {
+			return List.of();
+		}
+		IFruit fruitProvider = tree.getGenome().resolveActive(TreeChromosomes.FRUIT);
+		List<ItemStack> products = tree.produceStacks(level, pos, fruitProvider.getRipeningPeriod());
+		level.setBlock(pos, ArboricultureBlocks.LEAVES_DEFAULT.get(this.type).defaultState()
+			.setValue(LeavesBlock.PERSISTENT, state.getValue(LeavesBlock.PERSISTENT))
+			.setValue(LeavesBlock.DISTANCE, state.getValue(LeavesBlock.DISTANCE)), Block.UPDATE_CLIENTS);
+		return products;
 	}
 
 	@Override
