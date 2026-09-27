@@ -54,14 +54,20 @@ public class DefaultLeavesBlock extends AbstractLeavesBlock implements ILeafType
 
 		// Regrow fruit: convert non-fruit leaf back to fruit leaf for trees with fruit genome
 		// This mimics the LeavesBlockEntity ripening mechanic for the no-BE leaves
+		// BE formula: ripeningTime++ with probability=sappiness per tick, needs ripeningPeriod increments
+		// Expected ticks = ripeningPeriod / sappiness, so p = sappiness / ripeningPeriod for exact match
 		ITree tree = this.type.getIndividual();
 		if (tree != null && tree.hasFruitLeaves()) {
-			// 10% chance per random tick to fruit (adjustable via randomTickSpeed gamerule)
-			if (random.nextFloat() < 0.1f) {
-				Block fruitBlock = forestry.arboriculture.features.ArboricultureBlocks.LEAVES_DEFAULT_FRUIT.get(this.type).block();
-				level.setBlock(pos, fruitBlock.defaultBlockState()
-					.setValue(LeavesBlock.PERSISTENT, state.getValue(LeavesBlock.PERSISTENT))
-					.setValue(LeavesBlock.DISTANCE, state.getValue(LeavesBlock.DISTANCE)), Block.UPDATE_CLIENTS);
+			float sappiness = tree.getGenome().getActiveValue(forestry.api.arboriculture.genetics.TreeChromosomes.SAPPINESS);
+			int ripeningPeriod = tree.getGenome().resolveActive(forestry.api.arboriculture.genetics.TreeChromosomes.FRUIT).getRipeningPeriod();
+			if (ripeningPeriod > 0 && sappiness > 0) {
+				float probability = sappiness / (float) ripeningPeriod;
+				if (random.nextFloat() < probability) {
+					Block fruitBlock = forestry.arboriculture.features.ArboricultureBlocks.LEAVES_DEFAULT_FRUIT.get(this.type).block();
+					level.setBlock(pos, fruitBlock.defaultBlockState()
+						.setValue(LeavesBlock.PERSISTENT, state.getValue(LeavesBlock.PERSISTENT))
+						.setValue(LeavesBlock.DISTANCE, state.getValue(LeavesBlock.DISTANCE)), Block.UPDATE_CLIENTS);
+				}
 			}
 		}
 	}
