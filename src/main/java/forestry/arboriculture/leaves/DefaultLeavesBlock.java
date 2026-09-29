@@ -7,11 +7,14 @@ import forestry.api.client.IForestryClientApi;
 import forestry.core.platform.util.SpeciesUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.neoforged.api.distmarker.Dist;
@@ -38,6 +41,16 @@ public class DefaultLeavesBlock extends AbstractLeavesBlock implements ILeafType
 
 	public ForestryLeafType getType() {
 		return this.type;
+	}
+
+	@Override
+	public boolean isRandomlyTicking(BlockState state) {
+		return true;
+	}
+
+	@Override
+	public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+		super.randomTick(state, level, pos, random);
 	}
 
 	@Override

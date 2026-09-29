@@ -107,6 +107,11 @@ public class SaplingBlockEntity extends TileTreeContainer implements IOwnedTile 
 		Feature<NoneFeatureConfiguration> generator = tree.getTreeGenerator((ServerLevel) this.level, getBlockPos(), boneMealed);
 		final boolean generated;
 		if (generator instanceof AbstractForestryFeature base) {
+			// Player-grown trees use BE leaves to preserve genome (breeding, fruit, orchard harvesting).
+			// Worldgen trees keep lightweight no-BE leaves for performance.
+			if (base instanceof AbstractArboricultureFeature arboricultureFeature) {
+				arboricultureFeature.isWorldgen = false;
+			}
 			generated = base.place(tree.getGenome(), this.level, random, getBlockPos(), false);
 		} else {
 			ServerLevel level = (ServerLevel) this.level;
