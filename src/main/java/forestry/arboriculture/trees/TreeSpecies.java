@@ -197,6 +197,10 @@ public class TreeSpecies extends Species<ITreeSpeciesType, ITree> implements ITr
 						// default fruits are fully ripe
 						leaves.addRipeness(1);
 						leaves.setChanged();
+					} else {
+						// Freshly grown leaves: roll for fruit like the generator path does.
+						// Without this, newly grown trees never bear fruit.
+						leaves.setFruit(tree, false);
 					}
 				} else {
 					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 19);
